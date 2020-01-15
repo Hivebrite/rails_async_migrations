@@ -2,11 +2,9 @@
 # depending on the context mode
 module RailsAsyncMigrations
   class Tracer
-    def initialize
-    end
-
     def verbose(text)
       return unless verbose?
+
       puts "[VERBOSE] #{text}"
     end
 

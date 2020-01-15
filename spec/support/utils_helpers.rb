@@ -5,6 +5,12 @@ module UtilsHelpers
     end
   end
 
+  def config_queue_as(queue)
+    RailsAsyncMigrations.config do |config|
+      config.queue = queue
+    end
+  end
+
   def fake_version!
     allow_any_instance_of(
       RailsAsyncMigrations::Connection::ActiveRecord

@@ -4,8 +4,9 @@ require 'rails_async_migrations'
 
 require 'logger'
 require 'database_cleaner'
-require 'rspec-sidekiq'
 require 'delayed_job_active_record'
+require 'rspec-sidekiq'
+require 'shoulda-matchers'
 
 RSpec.configure do |config|
   config.example_status_persistence_file_path = '.rspec_status'
@@ -51,4 +52,12 @@ RSpec::Sidekiq.configure do |config|
   config.clear_all_enqueued_jobs = true
   config.enable_terminal_colours = true
   config.warn_when_jobs_not_processed_by_sidekiq = true
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :active_record
+    with.library :active_model
+  end
 end

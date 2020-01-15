@@ -10,6 +10,7 @@ RSpec.describe RailsAsyncMigrations::Migration::FireMigration do
 
   context '#perform' do
     subject { instance.perform }
+
     it { expect { subject }.to raise_error(RailsAsyncMigrations::Error) }
   end
 end
