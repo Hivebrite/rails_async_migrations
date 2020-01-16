@@ -1,3 +1,5 @@
+require 'slack-notifier'
+
 # we check the state of the queue and launch run worker if needed
 module RailsAsyncMigrations
   module Migration

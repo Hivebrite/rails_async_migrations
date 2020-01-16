@@ -9,6 +9,7 @@ module RailsAsyncMigrations
       @mode = :quiet # :verbose, :quiet
       @workers = :delayed_job # :sidekiq
       @queue = :default
+      @slack_notifier = {}
     end
   end
 end

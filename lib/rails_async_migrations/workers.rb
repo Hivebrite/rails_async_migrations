@@ -20,7 +20,7 @@ module RailsAsyncMigrations
     def check_queue(*args)
       case workers_type
       when :sidekiq
-        Workers::Sidekiq::CheckQueueWorker.set(queue: :custom).perform_async(*args)
+        Workers::Sidekiq::CheckQueueWorker.set(queue: default_queue).perform_async(*args)
       when :delayed_job
         ::Delayed::Job.enqueue Migration::CheckQueue.new
       end
@@ -29,7 +29,7 @@ module RailsAsyncMigrations
     def fire_migration(*args)
       case workers_type
       when :sidekiq
-        Workers::Sidekiq::FireMigrationWorker.set(queue: :custom).perform_async(*args)
+        Workers::Sidekiq::FireMigrationWorker.set(queue: default_queue).perform_async(*args)
       when :delayed_job
         ::Delayed::Job.enqueue Migration::FireMigration.new(*args)
       end
