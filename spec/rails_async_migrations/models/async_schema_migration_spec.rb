@@ -12,22 +12,22 @@ RSpec.describe AsyncSchemaMigration, type: :model do
   end
 
   context 'when created' do
-    it 'calls #trace' do
-      allow(subject).to receive(:trace)
+    it 'calls #notify' do
+      allow(subject).to receive(:notify)
 
       subject.save
 
-      expect(subject).to have_received(:trace)
+      expect(subject).to have_received(:notify)
     end
   end
 
-  describe '#trace' do
+  describe '#notify' do
     it 'prints current migration state' do
-      expect_any_instance_of(RailsAsyncMigrations::Tracer).to receive(:verbose).with(
+      expect_any_instance_of(RailsAsyncMigrations::Notifier).to receive(:verbose).with(
         "Asynchronous migration `1` is now `pending`"
       )
 
-      subject.trace
+      subject.notify
     end
   end
 end

@@ -2,7 +2,7 @@
 # default values set here
 module RailsAsyncMigrations
   class Config
-    attr_accessor :taken_methods, :mode, :workers, :queue, :webhook_url
+    attr_accessor :taken_methods, :mode, :workers, :queue, :slack_webhook_url, :slack_title_message
 
     def initialize
       @taken_methods = %i[change up down]

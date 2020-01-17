@@ -6,7 +6,6 @@ module RailsAsyncMigrations
 
       def initialize(migration_id)
         @notifier = Notifier.new
-        @tracer = Tracer.new
         @migration = AsyncSchemaMigration.find(migration_id)
       end
 
@@ -34,38 +33,34 @@ module RailsAsyncMigrations
       end
 
       def done?
-        if migration.reload.state == 'done'
-          msg = "Migration #{migration.version} is already `done`, cancelling fire"
+        return unless migration.reload.state == 'done'
 
-          @tracer.verbose(msg)
-          @notifier.failed(msg)
-          return true
-        end
+        @notifier.failed("Migration #{migration.version} is already `done`, cancelling fire")
+        return true
       end
 
       def process!
-        @notifier.processing("Migration #{migration.version} is being processed")
+        @start_time = Time.now
+
         migration.update! state: 'processing'
+        @notifier.processing("Migration #{migration.version} is being processed")
       end
 
       def done!
         migration.update! state: 'done'
-        msg = "Migration #{migration.version} was successfully processed"
-
-        @tracer.verbose(msg)
-        @notifier.done(msg)
         migration.reload
-      end
-
-      def base_notifier_message
-        @migration.version
+        @notifier.done("Migration #{migration.version} has been successfully processed in #{execution_time}")
       end
 
       def failed_with!(error)
         migration.update! state: 'failed'
-        msg = "Migration #{migration.version} failed with exception `#{error}`"
-        @notifier.failed(msg)
-        Tracer.new.verbose(msg)
+        @notifier.failed("Migration #{migration.version} failed with exception `#{error}`")
+      end
+
+      def execution_time
+        exec_time_in_sec = (migration.updated_at - @start_time).to_i
+
+        "#{exec_time_in_sec}s"
       end
     end
   end

@@ -11,9 +11,9 @@ module UtilsHelpers
     end
   end
 
-  def config_webhook_url_as(webhook_url)
+  def config_slack_webhook_url_as(slack_webhook_url)
     RailsAsyncMigrations.config do |config|
-      config.webhook_url = webhook_url
+      config.slack_webhook_url = slack_webhook_url
     end
   end
 

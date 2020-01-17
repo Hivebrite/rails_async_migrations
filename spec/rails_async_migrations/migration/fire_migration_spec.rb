@@ -11,15 +11,15 @@ RSpec.describe RailsAsyncMigrations::Migration::FireMigration do
   context '#perform' do
     subject { instance.perform }
 
+    let(:notifier) { instance_double(RailsAsyncMigrations::Notifier, verbose: nil, done: nil) }
+
     before do
       allow(instance).to receive(:process!).and_call_original
       allow(instance).to receive(:run_migration)
       allow(instance).to receive(:done!).and_call_original
       allow(instance).to receive(:check_queue).and_call_original
-
-      config_webhook_url_as(
-        'https://hooks.slack.com/services/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'
-      )
+      allow(RailsAsyncMigrations::Notifier).to receive(:new).and_return(notifier)
+      allow(notifier).to receive(:post)
     end
 
     context 'when the migration does not exists' do
@@ -44,7 +44,13 @@ RSpec.describe RailsAsyncMigrations::Migration::FireMigration do
     context 'when the migration has not been performed' do
       before { allow(instance).to receive(:done?).and_return(false) }
 
-      it 'updates the status to `done`' do
+      it 'runs the migration' do
+        subject
+
+        expect(instance).to have_received(:run_migration)
+      end
+
+      it 'updates the status to `processing`' do
         allow(instance).to receive(:done!)
 
         expect { subject; migration.reload }.to change { migration.state }.from('created').to('processing')
@@ -52,26 +58,12 @@ RSpec.describe RailsAsyncMigrations::Migration::FireMigration do
         expect(instance).to have_received(:process!)
       end
 
-      context 'when slack is defined' do
-        before do
+      context 'when the migration has been performed' do
+        it 'updates the status to `done`' do
+          expect { subject; migration.reload }.to change { migration.state }.from('created').to('done')
 
+          expect(instance).to have_received(:done!)
         end
-
-        it 'notify in the given channel' do
-          subject
-        end
-      end
-
-      it 'runs the migration' do
-        subject
-
-        expect(instance).to have_received(:run_migration)
-      end
-
-      it 'updates the status to `done`' do
-        expect { subject; migration.reload }.to change { migration.state }.from('created').to('done')
-
-        expect(instance).to have_received(:done!)
       end
 
       it 'checks the queue to trigger the next async migrations' do
