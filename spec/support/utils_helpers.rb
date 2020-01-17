@@ -11,6 +11,12 @@ module UtilsHelpers
     end
   end
 
+  def config_webhook_url_as(webhook_url)
+    RailsAsyncMigrations.config do |config|
+      config.webhook_url = webhook_url
+    end
+  end
+
   def fake_version!
     allow_any_instance_of(
       RailsAsyncMigrations::Connection::ActiveRecord

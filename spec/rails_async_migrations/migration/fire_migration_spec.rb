@@ -16,6 +16,10 @@ RSpec.describe RailsAsyncMigrations::Migration::FireMigration do
       allow(instance).to receive(:run_migration)
       allow(instance).to receive(:done!).and_call_original
       allow(instance).to receive(:check_queue).and_call_original
+
+      config_webhook_url_as(
+        'https://hooks.slack.com/services/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'
+      )
     end
 
     context 'when the migration does not exists' do
@@ -46,6 +50,16 @@ RSpec.describe RailsAsyncMigrations::Migration::FireMigration do
         expect { subject; migration.reload }.to change { migration.state }.from('created').to('processing')
 
         expect(instance).to have_received(:process!)
+      end
+
+      context 'when slack is defined' do
+        before do
+
+        end
+
+        it 'notify in the given channel' do
+          subject
+        end
       end
 
       it 'runs the migration' do
