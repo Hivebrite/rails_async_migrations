@@ -5,9 +5,4 @@ gemspec
 gem 'activerecord', '~> 5.2.0'
 gem 'sidekiq', '~> 5.2.3'
 gem 'delayed_job_active_record', '~> 4.1.3'
-gem "slack-notifier"
-
-group :test do
-  gem 'shoulda-matchers'
-  gem 'fantaskspec'
-end
+gem 'slack-notifier', '~> 2.3.2'
